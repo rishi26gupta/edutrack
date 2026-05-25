@@ -36,6 +36,11 @@ yarn-error.log*
 # vercel
 .vercel
 
+# project docs / planning (not for repo)
+*.pdf
+EduTrack_Sprint_Plan.md
+EduTrack_Complete_Project_Guide.md
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
