@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Sidebar from '@/components/Sidebar';
+import Footer from '@/components/Footer';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -53,9 +54,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Sidebar — full height, never scrolls (unless many links) */}
         <Sidebar role={user?.role ?? 'student'} />
 
-        {/* Main content scrolls independently */}
-        <main className='flex-1 overflow-y-auto p-6 md:p-8'>
-          {children}
+        {/* Main content + footer scroll independently together */}
+        <main className='flex-1 overflow-y-auto flex flex-col'>
+          <div className='flex-1 p-6 md:p-8'>
+            {children}
+          </div>
+          <Footer />
         </main>
       </div>
     </div>
