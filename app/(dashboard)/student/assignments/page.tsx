@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useState, useCallback } from 'react';
 import { toast } from 'sonner';
-import { BookOpen } from 'lucide-react';
+import { X } from 'lucide-react';
 import { Dialog, DialogContent, DialogClose, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import AssignmentCard from '@/components/AssignmentCard';
 import SubmissionForm from '@/components/SubmissionForm';
@@ -61,9 +61,6 @@ export default function StudentAssignmentsPage() {
         </div>
       ) : assignments.length === 0 ? (
         <div className='flex flex-col items-center justify-center py-24 text-center'>
-          <div className='flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-100 border border-gray-200 mb-4'>
-            <BookOpen className='h-8 w-8 text-gray-400' />
-          </div>
           <h3 className='text-lg font-bold text-gray-800 mb-1'>No assignments yet</h3>
           <p className='text-sm text-gray-500 max-w-xs'>
             Your teacher hasn't posted any assignments yet. Check back soon.
@@ -119,18 +116,15 @@ export default function StudentAssignmentsPage() {
         </div>
       )}
 
-      {/* View modal */}
       {viewing && (
         <AssignmentViewModal assignment={viewing} onClose={() => setViewing(null)} />
       )}
 
-      {/* Submission dialog */}
       <Dialog
         open={!!submitting}
         onOpenChange={open => { if (!open) { setSubmitting(null); fetchData(); } }}
       >
         <DialogContent className='w-[95vw] sm:max-w-3xl max-h-[82vh] overflow-y-auto p-0 gap-0' showCloseButton={false}>
-          {/* Sticky header */}
           <div className='sticky top-0 z-10 flex items-start justify-between px-8 py-5 bg-white border-b border-gray-100'>
             <div>
               <DialogTitle className='text-lg font-extrabold text-gray-900 leading-snug'>
@@ -144,10 +138,8 @@ export default function StudentAssignmentsPage() {
                 {submitting?.maxMarks} marks total
               </p>
             </div>
-            <DialogClose
-              className='flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors mt-0.5'
-            >
-              <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2.5' strokeLinecap='round' strokeLinejoin='round'><path d='M18 6 6 18'/><path d='m6 6 12 12'/></svg>
+            <DialogClose className='flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors mt-0.5'>
+              <X className='h-4 w-4' />
             </DialogClose>
           </div>
           <div className='px-8 py-6'>

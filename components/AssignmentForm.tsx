@@ -52,7 +52,6 @@ export default function AssignmentForm({ initial, onSuccess }: AssignmentFormPro
   const today      = new Date().toISOString().split('T')[0];
   const totalMarks = questions.reduce((s, q) => s + (Number(q.marks) || 0), 0);
 
-  // ── helpers ──────────────────────────────────────────────────────────
   const clearFieldError = (field: keyof FormErrors) =>
     setErrors(p => ({ ...p, [field]: undefined }));
 
@@ -90,7 +89,6 @@ export default function AssignmentForm({ initial, onSuccess }: AssignmentFormPro
     clearQError(i, field);
   };
 
-  // ── validation ───────────────────────────────────────────────────────
   const validate = (): FormErrors => {
     const e: FormErrors = {};
 
@@ -114,7 +112,6 @@ export default function AssignmentForm({ initial, onSuccess }: AssignmentFormPro
   const hasErrors = (e: FormErrors) =>
     e.title || e.subject || e.dueDate || e.questions?.some(qe => qe.question || qe.marks);
 
-  // ── submit ───────────────────────────────────────────────────────────
   const handleSubmit = async () => {
     const e = validate();
     if (hasErrors(e)) {
@@ -152,17 +149,14 @@ export default function AssignmentForm({ initial, onSuccess }: AssignmentFormPro
     setLoading(false);
   };
 
-  // ── render ───────────────────────────────────────────────────────────
   return (
     <div className='space-y-7'>
 
-      {/* ── Assignment Details ── */}
       <div className='space-y-4'>
         <p className='text-xs font-semibold text-gray-400 uppercase tracking-wide'>
           Assignment Details
         </p>
 
-        {/* Title */}
         <div>
           <label className='block text-sm font-medium text-gray-700 mb-1.5'>Title <span className='text-red-500'>*</span></label>
           <Input
@@ -175,7 +169,6 @@ export default function AssignmentForm({ initial, onSuccess }: AssignmentFormPro
         </div>
 
         <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-          {/* Subject */}
           <div>
             <label className='block text-sm font-medium text-gray-700 mb-1.5'>Subject <span className='text-red-500'>*</span></label>
             <Input
@@ -187,7 +180,6 @@ export default function AssignmentForm({ initial, onSuccess }: AssignmentFormPro
             <FieldError msg={errors.subject} />
           </div>
 
-          {/* Due Date */}
           <div>
             <label className='block text-sm font-medium text-gray-700 mb-1.5'>Due Date <span className='text-red-500'>*</span></label>
             <Input
@@ -202,10 +194,8 @@ export default function AssignmentForm({ initial, onSuccess }: AssignmentFormPro
         </div>
       </div>
 
-      {/* ── Divider ── */}
       <div className='border-t border-gray-100' />
 
-      {/* ── Questions ── */}
       <div className='space-y-4'>
         <div className='flex items-center justify-between'>
           <div>
@@ -239,7 +229,6 @@ export default function AssignmentForm({ initial, onSuccess }: AssignmentFormPro
                     : 'border border-gray-200'
                 }`}
               >
-                {/* Card header */}
                 <div className='flex items-center justify-between px-5 py-3 bg-white border-b border-gray-100'>
                   <div className='flex items-center gap-2.5'>
                     <span className={`flex h-6 w-6 items-center justify-center rounded-full text-white text-xs font-bold ${qErr?.question || qErr?.marks ? 'bg-red-500' : 'bg-black'}`}>
@@ -258,7 +247,6 @@ export default function AssignmentForm({ initial, onSuccess }: AssignmentFormPro
                   )}
                 </div>
 
-                {/* Card body */}
                 <div className='p-5 space-y-3'>
                   <div>
                     <label className='block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5'>
@@ -311,7 +299,6 @@ export default function AssignmentForm({ initial, onSuccess }: AssignmentFormPro
         )}
       </div>
 
-      {/* ── Submit ── */}
       <Button
         onClick={handleSubmit}
         disabled={loading}

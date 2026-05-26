@@ -38,7 +38,6 @@ const AssignmentSchema = new Schema<IAssignment>(
   { timestamps: true }
 );
 
-// Clear cached model to pick up schema changes in dev hot-reload
 if (mongoose.models.Assignment) delete (mongoose.models as any).Assignment;
 
 export default mongoose.model<IAssignment>('Assignment', AssignmentSchema);

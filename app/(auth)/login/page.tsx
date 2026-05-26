@@ -58,13 +58,11 @@ export default function LoginPage() {
 
   return (
     <div className='bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden'>
-      {/* Dark header */}
       <div className='px-8 py-6' style={{ background: '#0A0A0A' }}>
         <h1 className='text-2xl font-extrabold text-white'>Welcome back</h1>
         <p className='text-gray-500 text-sm mt-1'>Sign in to your EduTrack account</p>
       </div>
 
-      {/* Form */}
       <div className='px-8 py-7'>
         <form onSubmit={handleSubmit} className='space-y-4' noValidate>
           <div>

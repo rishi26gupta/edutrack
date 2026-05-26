@@ -45,7 +45,6 @@ export default function GradeModal({ submission, onClose, onSaved }: GradeModalP
     <Dialog open onOpenChange={onClose}>
       <DialogContent className='w-[95vw] sm:max-w-2xl max-h-[82vh] p-0 overflow-hidden rounded-2xl gap-0 flex flex-col' showCloseButton={false}>
 
-        {/* Dark header — fixed, never scrolls */}
         <div className='flex items-start justify-between px-7 py-5 shrink-0' style={{ background: '#0A0A0A' }}>
           <div>
             <DialogTitle className='text-white font-bold text-lg'>Grade Submission</DialogTitle>
@@ -67,11 +66,9 @@ export default function GradeModal({ submission, onClose, onSaved }: GradeModalP
           </button>
         </div>
 
-        {/* Scrollable body — flex-1 fills remaining space, min-h-0 enables overflow */}
         <div className='flex-1 min-h-0 overflow-y-auto'>
           <div className='px-7 py-6 space-y-5 bg-gray-50'>
 
-            {/* Student answers per question */}
             {submission.assignmentId?.questions?.length > 0 && (
               <div>
                 <p className='text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2'>
@@ -98,7 +95,6 @@ export default function GradeModal({ submission, onClose, onSaved }: GradeModalP
               </div>
             )}
 
-            {/* Fallback: single content view */}
             {!submission.assignmentId?.questions?.length && (
               <div>
                 <p className='text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2'>
@@ -110,7 +106,6 @@ export default function GradeModal({ submission, onClose, onSaved }: GradeModalP
               </div>
             )}
 
-            {/* Automated Evaluation */}
             {(aiSuggested != null || aiBreakdown.length > 0 || submission.aiFeedback) && (
               <div className='rounded-xl border border-gray-200 bg-white overflow-hidden'>
                 <div className='px-4 py-3 border-b border-gray-100 flex items-center justify-between'>
@@ -159,7 +154,6 @@ export default function GradeModal({ submission, onClose, onSaved }: GradeModalP
               </div>
             )}
 
-            {/* Final Grade */}
             <div>
               <label className='block text-sm font-medium text-gray-700 mb-1.5'>
                 Final Grade {maxMarks ? `(0 – ${maxMarks})` : ''} <span className='text-red-500'>*</span>
@@ -175,7 +169,6 @@ export default function GradeModal({ submission, onClose, onSaved }: GradeModalP
               />
             </div>
 
-            {/* Remarks */}
             <div>
               <label className='block text-sm font-medium text-gray-700 mb-1.5'>
                 Remarks <span className='font-normal text-gray-400'>(optional)</span>
@@ -189,7 +182,6 @@ export default function GradeModal({ submission, onClose, onSaved }: GradeModalP
               />
             </div>
 
-            {/* Status */}
             <div>
               <label className='block text-sm font-medium text-gray-700 mb-1.5'>Status</label>
               <Select value={status} onValueChange={v => setStatus(v ?? 'graded')}>
@@ -208,7 +200,6 @@ export default function GradeModal({ submission, onClose, onSaved }: GradeModalP
           </div>
         </div>
 
-        {/* Sticky footer — always visible, never scrolls away */}
         <div className='shrink-0 flex gap-3 px-7 py-4 bg-white border-t border-gray-100'>
           <Button variant='outline' className='flex-1 h-12 text-sm' onClick={onClose} disabled={loading}>
             Cancel

@@ -10,7 +10,6 @@ function getUser(req: NextRequest) {
   return token ? verifyToken(token) : null;
 }
 
-// GET — submissions scoped by role
 export async function GET(req: NextRequest) {
   const user = getUser(req);
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -20,10 +19,8 @@ export async function GET(req: NextRequest) {
 
     let filter: Record<string, any>;
     if (user.role === 'student') {
-      // Student sees only their own submissions
       filter = { studentId: user.id };
     } else {
-      // Teacher sees only submissions for assignments THEY created
       const ownAssignments = await Assignment.find({ teacherId: user.id }, '_id');
       filter = { assignmentId: { $in: ownAssignments.map(a => a._id) } };
     }
@@ -39,7 +36,6 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// POST — submit assignment (student only)
 export async function POST(req: NextRequest) {
   const user = getUser(req);
   if (!user || user.role !== 'student') {
@@ -58,7 +54,6 @@ export async function POST(req: NextRequest) {
 
     await connectDB();
 
-    // Check if student already submitted (and not asked to resubmit)
     const existing = await Submission.findOne({ assignmentId, studentId: user.id });
     if (existing && existing.status !== 'resubmit') {
       return NextResponse.json(
@@ -72,18 +67,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Assignment not found' }, { status: 404 });
     }
 
-    // Build questions list — fall back to single synthetic question if old format
     const questions =
       assignment.questions?.length > 0
         ? assignment.questions.map((q) => ({ question: q.question, marks: q.marks }))
         : [{ question: assignment.description ?? assignment.title, marks: assignment.maxMarks }];
 
-    // Build content string (concatenation of all answers for backward compat)
     const content =
       answers.map((a: { answer: string }, i: number) => `Q${i + 1}: ${a.answer}`).join('\n\n') ||
       ' ';
 
-    // Get AI evaluation
     const aiResult = await getAIFeedback(
       assignment.title,
       questions,
@@ -105,7 +97,6 @@ export async function POST(req: NextRequest) {
 
     let submission;
     if (existing && existing.status === 'resubmit') {
-      // Overwrite the existing resubmit record
       submission = await Submission.findByIdAndUpdate(existing._id, payload, { new: true })
         .populate('assignmentId', 'title subject maxMarks questions');
     } else {

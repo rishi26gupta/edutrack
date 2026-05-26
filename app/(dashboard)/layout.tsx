@@ -41,20 +41,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    /*
-     * Full-viewport layout — nothing at the page level scrolls.
-     * Only <main> scrolls its own content independently.
-     */
     <div className='h-screen flex flex-col overflow-hidden bg-slate-50'>
-      {/* Sticky navbar */}
       <Navbar user={user} />
-
-      {/* Content row — fills exactly the remaining height */}
       <div className='flex flex-1 overflow-hidden'>
-        {/* Sidebar — full height, never scrolls (unless many links) */}
         <Sidebar role={user?.role ?? 'student'} />
-
-        {/* Main content + footer scroll independently together */}
         <main className='flex-1 overflow-y-auto flex flex-col'>
           <div className='flex-1 p-6 md:p-8'>
             {children}

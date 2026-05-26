@@ -82,7 +82,6 @@ export default function StudentSubmissionsPage() {
                     <div>
                       <p className='text-xs font-semibold text-gray-500 uppercase mb-1'>Your Answers</p>
 
-                      {/* Per-question answers (new format) */}
                       {s.answers?.length > 0 ? (
                         <div className='space-y-2'>
                           {s.answers.map((a: { answer: string }, i: number) => {
@@ -108,7 +107,6 @@ export default function StudentSubmissionsPage() {
                           })}
                         </div>
                       ) : (
-                        /* Fallback for old single-answer submissions */
                         <p className='text-sm text-gray-700 whitespace-pre-wrap leading-relaxed'>{s.content}</p>
                       )}
                     </div>

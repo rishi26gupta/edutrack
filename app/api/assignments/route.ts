@@ -8,7 +8,6 @@ function getUser(req: NextRequest) {
   return token ? verifyToken(token) : null;
 }
 
-// GET — all assignments (teacher sees own, student sees all)
 export async function GET(req: NextRequest) {
   const user = getUser(req);
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -24,7 +23,6 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// POST — create assignment (teacher only)
 export async function POST(req: NextRequest) {
   const user = getUser(req);
   if (!user || user.role !== 'teacher') {

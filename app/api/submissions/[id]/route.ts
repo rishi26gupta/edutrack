@@ -10,7 +10,6 @@ function getUser(req: NextRequest) {
   return token ? verifyToken(token) : null;
 }
 
-// GET single submission
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -32,7 +31,6 @@ export async function GET(
   }
 }
 
-// PUT — teacher grades OR student resubmits
 export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -48,18 +46,15 @@ export async function PUT(
     if (user.role === 'teacher') {
       const { grade, teacherRemarks, status } = body;
 
-      // Fetch submission + populate assignment to verify ownership and check grade cap
       const sub = await Submission.findById(id)
         .populate('assignmentId', 'teacherId maxMarks');
       if (!sub) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
-      // Ensure this submission belongs to an assignment the teacher owns
       const assignmentTeacherId = String((sub.assignmentId as any)?.teacherId);
       if (assignmentTeacherId !== String(user.id)) {
         return NextResponse.json({ error: 'Forbidden — not your assignment' }, { status: 403 });
       }
 
-      // Server-side grade cap — reject if grade exceeds maxMarks
       const maxMarks: number = (sub.assignmentId as any)?.maxMarks ?? 0;
       if (grade != null) {
         if (Number(grade) < 0) {
@@ -80,7 +75,6 @@ export async function PUT(
       );
       return NextResponse.json(updated);
     } else {
-      // Student resubmits — only if status is 'resubmit'
       const submission = await Submission.findOne({ _id: id, studentId: user.id });
       if (!submission) return NextResponse.json({ error: 'Not found or forbidden' }, { status: 404 });
       if (submission.status !== 'resubmit') {
@@ -125,7 +119,6 @@ export async function PUT(
   }
 }
 
-// DELETE — teacher only, must own the assignment
 export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -139,7 +132,6 @@ export async function DELETE(
     const { id } = await params;
     await connectDB();
 
-    // Verify the submission belongs to an assignment this teacher owns
     const submission = await Submission.findById(id).populate('assignmentId', 'teacherId');
     if (!submission) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 

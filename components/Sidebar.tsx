@@ -25,14 +25,12 @@ export default function Sidebar({ role }: { role: 'teacher' | 'student' }) {
       className='w-64 shrink-0 flex flex-col h-full bg-white'
       style={{ borderRight: '1px solid #EAECF0' }}
     >
-      {/* Portal label */}
       <div className='shrink-0 px-5 pt-6 pb-3'>
         <p className='text-xs font-semibold text-gray-400 uppercase tracking-wide'>
           {role === 'teacher' ? 'Teacher Portal' : 'Student Portal'}
         </p>
       </div>
 
-      {/* Nav links */}
       <nav className='flex-1 overflow-y-auto px-3 pb-4 space-y-1'>
         {links.map(link => {
           const Icon   = link.icon;
@@ -55,7 +53,6 @@ export default function Sidebar({ role }: { role: 'teacher' | 'student' }) {
         })}
       </nav>
 
-      {/* Footer */}
       <div className='shrink-0 px-5 py-4' style={{ borderTop: '1px solid #F3F4F6' }}>
         <a
           href='https://houseofedtech.in'

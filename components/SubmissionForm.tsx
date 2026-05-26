@@ -80,7 +80,6 @@ export default function SubmissionForm({ assignment, onSuccess }: SubmissionForm
     setLoading(false);
   };
 
-  /* ── Success state ── */
   if (submission) {
     return (
       <div className='space-y-4'>
@@ -95,7 +94,6 @@ export default function SubmissionForm({ assignment, onSuccess }: SubmissionForm
     );
   }
 
-  /* ── Form ── */
   return (
     <div className='space-y-5'>
       {questions.map((q, idx) => (
@@ -105,7 +103,6 @@ export default function SubmissionForm({ assignment, onSuccess }: SubmissionForm
             answerErrors[idx] ? 'border border-red-300' : 'border border-gray-200'
           } bg-gray-50`}
         >
-          {/* Question header */}
           <div className='flex items-start gap-3 px-5 py-4 bg-white border-b border-gray-100'>
             <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-white text-xs font-bold mt-0.5 ${answerErrors[idx] ? 'bg-red-500' : 'bg-black'}`}>
               {idx + 1}
@@ -116,7 +113,6 @@ export default function SubmissionForm({ assignment, onSuccess }: SubmissionForm
             </div>
           </div>
 
-          {/* Answer */}
           <div className='p-5'>
             <label className='block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5'>
               Your Answer <span className='text-red-500'>*</span>
@@ -143,7 +139,6 @@ export default function SubmissionForm({ assignment, onSuccess }: SubmissionForm
         </div>
       ))}
 
-      {/* Attachment */}
       <div>
         <label className='block text-sm font-medium text-gray-700 mb-1.5'>
           Attachment Link <span className='font-normal text-gray-400'>(optional)</span>
@@ -159,7 +154,6 @@ export default function SubmissionForm({ assignment, onSuccess }: SubmissionForm
         </div>
       </div>
 
-      {/* Submit */}
       <Button
         className='w-full h-13 bg-black hover:bg-gray-900 text-white font-semibold gap-2 text-base rounded-xl transition-colors'
         onClick={handleSubmit}

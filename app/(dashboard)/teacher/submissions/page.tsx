@@ -31,7 +31,6 @@ export default function TeacherSubmissionsPage() {
 
   useEffect(() => { fetchSubmissions(); }, [fetchSubmissions]);
 
-  // Build unique assignment options — cast _id to string explicitly
   const assignmentOptions: [string, string][] = Array.from(
     new Map(
       submissions
@@ -40,7 +39,6 @@ export default function TeacherSubmissionsPage() {
     ).entries()
   );
 
-  // Filter submissions — compare as strings
   const filtered =
     filter === 'all'
       ? submissions
@@ -56,8 +54,7 @@ export default function TeacherSubmissionsPage() {
 
         <Select value={filter} onValueChange={val => setFilter(val ?? 'all')}>
           <SelectTrigger className='w-full sm:w-64 h-11 text-sm border-gray-200'>
-            {/* Compute display text directly — Base UI SelectValue can't reliably show label for ObjectId values */}
-            <span className='flex-1 text-left text-sm truncate text-gray-700'>
+              <span className='flex-1 text-left text-sm truncate text-gray-700'>
               {filter === 'all'
                 ? 'All Assignments'
                 : (assignmentOptions.find(([id]) => id === filter)?.[1] ?? 'Selected')}

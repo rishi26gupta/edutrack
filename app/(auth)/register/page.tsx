@@ -62,7 +62,6 @@ export default function RegisterPage() {
 
       <div className='px-8 py-7'>
         <form onSubmit={handleSubmit} className='space-y-4' noValidate>
-          {/* Name */}
           <div>
             <label className='block text-sm font-semibold text-gray-700 mb-1.5'>Full Name <span className='text-red-500'>*</span></label>
             <Input
@@ -74,7 +73,6 @@ export default function RegisterPage() {
             <FieldError msg={errors.name} />
           </div>
 
-          {/* Email */}
           <div>
             <label className='block text-sm font-semibold text-gray-700 mb-1.5'>Email Address <span className='text-red-500'>*</span></label>
             <Input
@@ -87,7 +85,6 @@ export default function RegisterPage() {
             <FieldError msg={errors.email} />
           </div>
 
-          {/* Password */}
           <div>
             <label className='block text-sm font-semibold text-gray-700 mb-1.5'>Password <span className='text-red-500'>*</span></label>
             <div className='relative'>
@@ -106,7 +103,6 @@ export default function RegisterPage() {
             <FieldError msg={errors.password} />
           </div>
 
-          {/* Role */}
           <div>
             <label className='block text-sm font-semibold text-gray-700 mb-1.5'>I am a <span className='text-red-500'>*</span></label>
             <Select value={form.role} onValueChange={val => setForm({ ...form, role: val ?? 'student' })}>
