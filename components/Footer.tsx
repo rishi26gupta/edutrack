@@ -1,5 +1,6 @@
 import React from 'react';
-import { Github, Linkedin, ExternalLink } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
+import { FaGithub, FaLinkedin } from 'react-icons/fa';
 
 export default function Footer() {
   return (
@@ -35,7 +36,7 @@ export default function Footer() {
             rel='noopener noreferrer'
             className='flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-900 transition-colors font-medium'
           >
-            <Github className='h-4 w-4' />
+            <FaGithub className='h-4 w-4' />
             GitHub
           </a>
           <a
@@ -44,7 +45,7 @@ export default function Footer() {
             rel='noopener noreferrer'
             className='flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-800 transition-colors font-medium'
           >
-            <Linkedin className='h-4 w-4' />
+            <FaLinkedin className='h-4 w-4' />
             LinkedIn
           </a>
         </div>
