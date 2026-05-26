@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/jwt';
 
@@ -7,17 +7,17 @@ export default async function Home() {
   const token = cookieStore.get('token')?.value;
 
   if (!token) {
-    return NextResponse.redirect(new URL('/login', process.env.NEXT_PUBLIC_APP_URL));
+    redirect('/login');
   }
 
   const payload = verifyToken(token);
   if (!payload) {
-    return NextResponse.redirect(new URL('/login', process.env.NEXT_PUBLIC_APP_URL));
+    redirect('/login');
   }
 
   if (payload.role === 'teacher') {
-    return NextResponse.redirect(new URL('/teacher/assignments', process.env.NEXT_PUBLIC_APP_URL));
+    redirect('/teacher/assignments');
   }
 
-  return NextResponse.redirect(new URL('/student/assignments', process.env.NEXT_PUBLIC_APP_URL));
+  redirect('/student/assignments');
 }

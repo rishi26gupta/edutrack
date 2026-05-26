@@ -10,16 +10,26 @@ function getUser(req: NextRequest) {
   return token ? verifyToken(token) : null;
 }
 
-// GET — all submissions (student sees own, teacher sees all)
+// GET — submissions scoped by role
 export async function GET(req: NextRequest) {
   const user = getUser(req);
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   try {
     await connectDB();
-    const filter = user.role === 'student' ? { studentId: user.id } : {};
+
+    let filter: Record<string, any>;
+    if (user.role === 'student') {
+      // Student sees only their own submissions
+      filter = { studentId: user.id };
+    } else {
+      // Teacher sees only submissions for assignments THEY created
+      const ownAssignments = await Assignment.find({ teacherId: user.id }, '_id');
+      filter = { assignmentId: { $in: ownAssignments.map(a => a._id) } };
+    }
+
     const submissions = await Submission.find(filter)
-      .populate('assignmentId', 'title subject maxMarks dueDate')
+      .populate('assignmentId', 'title subject maxMarks dueDate questions')
       .populate('studentId', 'name email')
       .sort({ createdAt: -1 });
     return NextResponse.json(submissions);
@@ -29,7 +39,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// POST — submit assignment (student only), generates AI feedback
+// POST — submit assignment (student only)
 export async function POST(req: NextRequest) {
   const user = getUser(req);
   if (!user || user.role !== 'student') {
@@ -37,17 +47,24 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { assignmentId, content, fileUrl } = await req.json();
-    if (!assignmentId || !content) {
-      return NextResponse.json({ error: 'assignmentId and content are required' }, { status: 400 });
+    const { assignmentId, answers, fileUrl } = await req.json();
+
+    if (!assignmentId || !Array.isArray(answers) || answers.length === 0) {
+      return NextResponse.json(
+        { error: 'assignmentId and answers array are required' },
+        { status: 400 }
+      );
     }
 
     await connectDB();
 
-    // Check if student already submitted
+    // Check if student already submitted (and not asked to resubmit)
     const existing = await Submission.findOne({ assignmentId, studentId: user.id });
     if (existing && existing.status !== 'resubmit') {
-      return NextResponse.json({ error: 'Already submitted. Wait for teacher to allow resubmission.' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Already submitted. Wait for teacher to allow resubmission.' },
+        { status: 400 }
+      );
     }
 
     const assignment = await Assignment.findById(assignmentId);
@@ -55,17 +72,47 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Assignment not found' }, { status: 404 });
     }
 
-    // Get AI feedback from Groq
-    const aiFeedback = await getAIFeedback(assignment.title, content);
+    // Build questions list — fall back to single synthetic question if old format
+    const questions =
+      assignment.questions?.length > 0
+        ? assignment.questions.map((q) => ({ question: q.question, marks: q.marks }))
+        : [{ question: assignment.description ?? assignment.title, marks: assignment.maxMarks }];
 
-    const submission = await Submission.create({
+    // Build content string (concatenation of all answers for backward compat)
+    const content =
+      answers.map((a: { answer: string }, i: number) => `Q${i + 1}: ${a.answer}`).join('\n\n') ||
+      ' ';
+
+    // Get AI evaluation
+    const aiResult = await getAIFeedback(
+      assignment.title,
+      questions,
+      answers,
+      assignment.maxMarks
+    );
+
+    const payload = {
       assignmentId,
-      content,
-      fileUrl: fileUrl || undefined,
       studentId: user.id,
-      aiFeedback,
-      status: 'submitted',
-    });
+      content,
+      answers,
+      fileUrl: fileUrl || undefined,
+      aiFeedback: aiResult.feedback,
+      aiSuggestedGrade: aiResult.suggestedGrade,
+      aiBreakdown: aiResult.breakdown,
+      status: 'submitted' as const,
+    };
+
+    let submission;
+    if (existing && existing.status === 'resubmit') {
+      // Overwrite the existing resubmit record
+      submission = await Submission.findByIdAndUpdate(existing._id, payload, { new: true })
+        .populate('assignmentId', 'title subject maxMarks questions');
+    } else {
+      const created = await Submission.create(payload);
+      submission = await Submission.findById(created._id)
+        .populate('assignmentId', 'title subject maxMarks questions');
+    }
 
     return NextResponse.json(submission, { status: 201 });
   } catch (e) {

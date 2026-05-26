@@ -10,15 +10,18 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { assignmentTitle, content } = await req.json();
-    if (!assignmentTitle || !content) {
-      return NextResponse.json({ error: 'assignmentTitle and content are required' }, { status: 400 });
+    const { assignmentTitle, questions, answers, maxMarks } = await req.json();
+    if (!assignmentTitle || !questions || !answers) {
+      return NextResponse.json(
+        { error: 'assignmentTitle, questions and answers are required' },
+        { status: 400 }
+      );
     }
 
-    const aiFeedback = await getAIFeedback(assignmentTitle, content);
-    return NextResponse.json({ aiFeedback });
+    const result = await getAIFeedback(assignmentTitle, questions, answers, maxMarks ?? 100);
+    return NextResponse.json(result);
   } catch (e) {
     console.error('[AI Feedback Error]', e);
-    return NextResponse.json({ error: 'Failed to generate AI feedback' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to generate feedback' }, { status: 500 });
   }
 }

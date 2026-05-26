@@ -41,12 +41,34 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await req.json();
+    const { title, subject, dueDate, questions } = body;
+
+    if (!title || !subject || !dueDate) {
+      return NextResponse.json({ error: 'title, subject and dueDate are required' }, { status: 400 });
+    }
+    const today = new Date().toISOString().split('T')[0];
+    if (dueDate < today) {
+      return NextResponse.json({ error: 'Due date cannot be in the past' }, { status: 400 });
+    }
+    if (!Array.isArray(questions) || questions.length === 0) {
+      return NextResponse.json({ error: 'At least one question is required' }, { status: 400 });
+    }
+
+    const maxMarks = questions.reduce((sum: number, q: any) => sum + Number(q.marks), 0);
+
     await connectDB();
     const assignment = await Assignment.findOneAndUpdate(
       { _id: id, teacherId: user.id },
-      body,
+      {
+        title: title.trim(),
+        subject: subject.trim(),
+        dueDate,
+        questions: questions.map((q: any) => ({ question: q.question.trim(), marks: Number(q.marks) })),
+        maxMarks,
+      },
       { new: true, runValidators: true }
     );
+
     if (!assignment) {
       return NextResponse.json({ error: 'Not found or forbidden' }, { status: 404 });
     }

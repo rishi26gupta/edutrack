@@ -32,18 +32,33 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { title, description, subject, dueDate, maxMarks } = await req.json();
-    if (!title || !description || !subject || !dueDate || !maxMarks) {
-      return NextResponse.json({ error: 'All fields required' }, { status: 400 });
+    const body = await req.json();
+    const { title, subject, dueDate, questions } = body;
+
+    if (!title || !subject || !dueDate) {
+      return NextResponse.json({ error: 'title, subject and dueDate are required' }, { status: 400 });
     }
+    const today = new Date().toISOString().split('T')[0];
+    if (dueDate < today) {
+      return NextResponse.json({ error: 'Due date cannot be in the past' }, { status: 400 });
+    }
+    if (!Array.isArray(questions) || questions.length === 0) {
+      return NextResponse.json({ error: 'At least one question is required' }, { status: 400 });
+    }
+    for (const q of questions) {
+      if (!q.question?.trim()) return NextResponse.json({ error: 'All questions must have text' }, { status: 400 });
+      if (!q.marks || Number(q.marks) < 1) return NextResponse.json({ error: 'All questions need marks ≥ 1' }, { status: 400 });
+    }
+
+    const maxMarks = questions.reduce((sum: number, q: any) => sum + Number(q.marks), 0);
 
     await connectDB();
     const assignment = await Assignment.create({
-      title,
-      description,
-      subject,
+      title: title.trim(),
+      subject: subject.trim(),
       dueDate,
-      maxMarks: Number(maxMarks),
+      questions: questions.map((q: any) => ({ question: q.question.trim(), marks: Number(q.marks) })),
+      maxMarks,
       teacherId: user.id,
     });
     return NextResponse.json(assignment, { status: 201 });
